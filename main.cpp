@@ -97,7 +97,7 @@ bool init()
 			}
 		}
 	}
-	
+	Texture::Renderer=gRenderer;
 	return success;
 }
 
@@ -105,7 +105,7 @@ bool loadMedia()
 {
 
 	//Load menu texture
-	TTF_Font* menuFont = TTF_OpenFont( "lazy.ttf", 28);
+	TTF_Font* menuFont = TTF_OpenFont( "Fonts/lazy.ttf", 28);
 	if(menuFont == NULL){
 		printf( "Failed to load lazy font! SDL_ttf Error: %s\n", TTF_GetError() );
 		return false;	
@@ -163,6 +163,8 @@ void close()
 	gDotTexture.free();
 	gTileTexture.free(); */
 
+	gTextureManager.Free();
+
 	//Destroy window	
 	SDL_DestroyRenderer( gRenderer );
 	SDL_DestroyWindow( gWindow );
@@ -171,6 +173,7 @@ void close()
 
 	//Quit SDL subsystems
 	IMG_Quit();
+	TTF_Quit();
 	SDL_Quit();
 }
 

@@ -52,10 +52,10 @@ bool Texture::LoadFromBitMapImage(std::string path, Uint8 r, Uint8 g, Uint8 b)
 	return true;
 }
 
-bool Texture::LoadFromPNGImage( std::string path, Uint8 r = 0, Uint8 g = 0, Uint8 b = 0 )
+bool Texture::LoadFromPNGImage( std::string path, Uint8 r, Uint8 g, Uint8 b )
 {
 	//Get rid of preexisting texture
-	free();
+	Free();
 
     //doubt
 	// Return if the renderer was not set
