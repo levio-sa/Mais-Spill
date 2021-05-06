@@ -19,7 +19,7 @@
 //	frameCount = 0;
 //}
 
-ServerPlayer::ServerPlayer(Tile* tile, Texture* texture)
+ServerPlayer::ServerPlayer(Tile* tile, Texture* texture, int width, int height)
 {
 	// Set all variables to default state
 	currTile = tile;
@@ -36,16 +36,21 @@ ServerPlayer::ServerPlayer(Tile* tile, Texture* texture)
 		position.y = 0;
 	}
 
+	collider.x = position.x;
+	collider.y = position.y;
 	collider.w = Width;
 	collider.h = Height;
 
 	moveDir = MOVE_RIGHT;
 	nextDir = MOVE_RIGHT;
 
-	ServerPlayerTexture = texture;
+	serverPlayerTexture = texture;
 
 	frame = 0;
 	frameCount = 0;
+
+	LEVEL_WIDTH = width;
+	LEVEL_HEIGHT = height;
 
 	LoadMedia();
 }
@@ -61,20 +66,20 @@ ServerPlayer::~ServerPlayer()
 //	position.y = newY;
 //}
 
-void ServerPlayer::SetTile(Tile* newTile)
-{
-	if (currTile != NULL)
-		currTile->SetServerPlayer(NULL);
+// void ServerPlayer::SetTile(Tile* newTile) // need not understood
+// {
+// 	if (currTile != NULL)
+// 		currTile->SetServerPlayer(NULL);
 
-	currTile = newTile;
+// 	currTile = newTile;
 	
-	if (currTile != NULL) {
-		currTile->SetServerPlayer(this);
+// 	if (currTile != NULL) {
+// 		currTile->SetServerPlayer(this);
 
-		position.x = currTile->GetPosition().x * Tile::box.w;
-		position.y = currTile->GetPosition().y * Tile::box.h;
-	}
-}
+// 		position.x = currTile->GetPosition().x * Tile::box.w;
+// 		position.y = currTile->GetPosition().y * Tile::box.h;
+// 	}
+// }
 
 void ServerPlayer::SetNextTile(Tile* newNextTile)
 {
@@ -102,6 +107,16 @@ void ServerPlayer::HandleEvents(SDL_Event* event)
 		case SDLK_RIGHT:
 		case SDLK_d: nextDir = MOVE_RIGHT; break;
 		}
+
+		// Throw bullet
+		case SDLK_SPACE:
+		//do something
+		break;
+
+		// Throw BOMB
+		case SDLK_b:
+		//do something
+		break;
 	}
 }
 
@@ -166,6 +181,32 @@ bool ServerPlayer::TryToMove(MoveDirection direction)
 
 	return true;
 }
+
+void ServerPlayer::setCamera( SDL_Rect& camera )
+{
+	//Center the camera over the dot
+	camera.x = ( mBox.x + Width / 2 ) - Width / 2;
+	camera.y = ( mBox.y + Height / 2 ) - Height / 2;
+
+	//Keep the camera in bounds
+	if( camera.x < 0 )
+	{ 
+		camera.x = 0;
+	}
+	if( camera.y < 0 )
+	{
+		camera.y = 0;
+	}
+	if( camera.x > LEVEL_WIDTH - camera.w )
+	{
+		camera.x = LEVEL_WIDTH - camera.w;
+	}
+	if( camera.y > LEVEL_HEIGHT - camera.h )
+	{
+		camera.y = LEVEL_HEIGHT - camera.h;
+	}
+}
+
 
 bool ServerPlayer::CheckForCollision(const SDL_Rect &otherCollider)
 {

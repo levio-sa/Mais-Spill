@@ -4,8 +4,7 @@
 
 class ServerPlayer;
 class Wall;
-class Point;
-class Blinky;
+class Road;
 
 enum TileType {
     TILE_GRASS,
@@ -49,17 +48,14 @@ class Tile {
         // Sets pointer to wall in the tile
         void SetWall(Wall* wall);
 
-        // // Sets pointer to point in the tile
-        // void SetPoint(Point* wall);
-
-        // // Sets pointer to Blinky in the tile
-        // void SetBlinky(Blinky* blinky);
+        // Sets pointer to wall in the tile
+        void SetRoad(Road* road);
 
         // Sets position of the tile
         void SetPos(int x, int y);
 
         // Sets type of the tile
-        void SetType(int t); // should I go with type or wall and road?
+        void SetType(int t); // should I go with type or wall and road?-> if static property then no need to create an object
 
         // Returns pointer to ServerPlayer in the tile
         ServerPlayer* GetServerPlayer();
@@ -68,10 +64,7 @@ class Tile {
         Wall* GetWall();
 
         // Returns pointer to wall in the tile
-        Point* GetPoint();
-
-        // Returns pointer to wall in the tile
-        Blinky* GetBlinky();
+        Road* GetRoad();
     
     private:
 
@@ -82,4 +75,7 @@ class Tile {
         TileType type;
 
         SDL_Point position;
+
+        Wall* wall;
+        Road* road;
 };

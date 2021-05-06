@@ -1,17 +1,7 @@
 #include "road.h"
+#include "collision.h"
 
 SDL_Rect Road::textureClips[16];
-
-//Road::Road()
-//{
-//	currTile = NULL;
-//
-//	position.x = 0;
-//	position.y = 0;
-//
-//	collider.w = Width;
-//	collider.h = Height;
-//}
 
 void Road::CreateClips()
 {
@@ -46,7 +36,7 @@ Road::Road(Tile* tile, Texture* texture)
 	RoadTexture = texture;
 
 	if (currTile != NULL) {
-		// currTile->SetRoad(this);
+		currTile->SetRoad(this);
 
 		position.x = currTile->GetPosition().x * Width;
 		position.y = currTile->GetPosition().y * Height;
@@ -56,16 +46,18 @@ Road::Road(Tile* tile, Texture* texture)
 		position.y = 0;
 	}
 
+	collider.x = position.x;
+	collider.y = position.y;
 	collider.w = Width;
 	collider.h = Height;
 
 	UpdateConnections();
 
 	std::array<Tile*, 4> neighbours = tileGraph->GetNeighbours(this->currTile);
-	// for (int i = 0; i < 4; i++) {
-	// 	if (CheckForRoad(neighbours[i]))
-	// 		// neighbours[i]->GetRoad()->UpdateConnections();
-	// }
+	for (int i = 0; i < 4; i++) {
+		if (CheckForRoad(neighbours[i]))
+			// neighbours[i]->GetRoad()->UpdateConnections();
+	}
 }
 
 Road::~Road()
@@ -76,12 +68,12 @@ Road::~Road()
 void Road::SetTile(Tile* newTile)
 {
 	if (currTile != NULL)
-		// currTile->SetRoad(NULL);
+		currTile->SetRoad(NULL);
 
 	currTile = newTile;
 
 	if (currTile != NULL) {
-		// currTile->SetRoad(this);
+		currTile->SetRoad(this);
 
 		position.x = currTile->GetPosition().x * Width;
 		position.y = currTile->GetPosition().y * Height;
@@ -109,12 +101,16 @@ void Road::Delete()
 	// Calling base function
 	GameObject::Delete();
 
-	// currTile->SetRoad(NULL);
+	currTile->SetRoad(NULL);
 }
 
-void Road::Render()
+void Road::Render(SDL_Rect &camera)
 {
-	RoadTexture->Render(position.x, position.y, &textureClips[connections]);
+	if( CheckForCollision(camera, collider)){
+
+		RoadTexture->Render(position.x, position.y, &textureClips[connections]);
+
+	}
 }
 
 SDL_Rect Road::GetCollider()
@@ -134,8 +130,8 @@ Tile* Road::GetTile()
 
 bool Road::CheckForRoad(Tile* tile)
 {
-	// if (tile != NULL && tile->GetRoad() != NULL)
-	// 	return true;
+	if (tile != NULL && tile->GetRoad() != NULL)
+		return true;
 
 	return false;
 }

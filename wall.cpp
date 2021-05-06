@@ -1,19 +1,9 @@
 #include "wall.h"
+#include "collision.h"
 
 SDL_Rect Wall::textureClips[16];
 
-//Wall::Wall()
-//{
-//	currTile = NULL;
-//
-//	position.x = 0;
-//	position.y = 0;
-//
-//	collider.w = Width;
-//	collider.h = Height;
-//}
-
-void Wall::CreateClips()
+void Wall::CreateClips() // this function needs to be modified according to sprite sheets
 {
 	// 0000 - standalone
 	// 1000 - N
@@ -46,7 +36,7 @@ Wall::Wall(Tile* tile, Texture* texture)
 	wallTexture = texture;
 
 	if (currTile != NULL) {
-		// currTile->SetWall(this);
+		currTile->SetWall(this);
 
 		position.x = currTile->GetPosition().x * Width;
 		position.y = currTile->GetPosition().y * Height;
@@ -56,16 +46,18 @@ Wall::Wall(Tile* tile, Texture* texture)
 		position.y = 0;
 	}
 
+	collider.x = position.x;
+	collider.y = position.y;
 	collider.w = Width;
 	collider.h = Height;
 
 	UpdateConnections();
 
 	std::array<Tile*, 4> neighbours = tileGraph->GetNeighbours(this->currTile);
-	// for (int i = 0; i < 4; i++) {
-	// 	if (CheckForWall(neighbours[i]))
-	// 		neighbours[i]->GetWall()->UpdateConnections();
-	// }
+	for (int i = 0; i < 4; i++) {
+		if (CheckForWall(neighbours[i]))
+			neighbours[i]->GetWall()->UpdateConnections();
+	} // here this is a redundant way to do things. Better would be to update when all walls have been created
 }
 
 Wall::~Wall()
@@ -76,12 +68,12 @@ Wall::~Wall()
 void Wall::SetTile(Tile* newTile)
 {
 	if (currTile != NULL)
-		// currTile->SetWall(NULL);
+		currTile->SetWall(NULL);
 
 	currTile = newTile;
 
 	if (currTile != NULL) {
-		// currTile->SetWall(this);
+		currTile->SetWall(this);
 
 		position.x = currTile->GetPosition().x * Width;
 		position.y = currTile->GetPosition().y * Height;
@@ -109,12 +101,16 @@ void Wall::Delete()
 	// Calling base function
 	GameObject::Delete();
 
-	// currTile->SetWall(NULL);
+	currTile->SetWall(NULL);
 }
 
-void Wall::Render()
+void Wall::Render(SDL_Rect& camera)
 {
-	wallTexture->Render(position.x, position.y, &textureClips[connections]);
+	if(CheckForCollision(camera, collider)){
+		
+		wallTexture->Render(position.x, position.y, &textureClips[connections]);
+	
+	}
 }
 
 SDL_Rect Wall::GetCollider()
@@ -134,8 +130,8 @@ Tile* Wall::GetTile()
 
 bool Wall::CheckForWall(Tile* tile)
 {
-	// if (tile != NULL && tile->GetWall() != NULL)
-	// 	return true;
+	if (tile != NULL && tile->GetWall() != NULL)
+		return true;
 
 	return false;
 }

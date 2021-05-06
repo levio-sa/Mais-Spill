@@ -41,7 +41,7 @@ public:
 	void Delete();
 
 	// Renders the Road
-	void Render();
+	void Render(SDL_Rect &camera);
 
 	// Releases texture memory
 	// void Free();

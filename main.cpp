@@ -9,6 +9,8 @@
 #include "texture.h"
 #include "texture_manager.h"
 #include "server_player.h"
+#include "wall.h"
+#include "road.h"
 #include "tile_graph.h"
 #include "map_generator.h"
 
@@ -172,6 +174,9 @@ bool loadMedia(int tileGraphWidth, int tileGraphHeight, string mapFile)
 	// TileGraph Setup
 	gTileGraph.Setup(tileGraphWidth,tileGraphWidth);
 
+	Wall::CreateClips();
+	Road::CreateClips();
+
 	// Load Map
 	if (!gMapGenerator.Load(mapFile)){
 		printf("Failed to load map");
@@ -222,6 +227,11 @@ void close()
 	gDotTexture.free();
 	gTileTexture.free(); */
 
+	// Free all objects
+	for (unsigned int i = 0; i < gGameObjectList.size(); i++)
+		delete gGameObjectList[i];
+
+	// Free all textures
 	gTextureManager.Free();
 
 	//Destroy window	

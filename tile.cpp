@@ -47,6 +47,11 @@ SDL_Rect Tile::GetBox(){
     return box;
 }
 
+Wall* Tile::GetWall()
+{
+	return wall;
+}
+
 void Tile::SetPos(int xcor, int ycor){
     position.x = xcor;
     position.y = ycor;
@@ -56,4 +61,14 @@ void Tile::SetPos(int xcor, int ycor){
 
 void Tile::SetType(int t){
     type = (TileType)t;
+}
+
+void Tile::SetWall(Wall* wall)
+{
+	this->wall = wall;
+}
+
+void Tile::SetRoad(Road* road)
+{
+	this->road = road;
 }

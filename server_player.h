@@ -7,31 +7,26 @@
 #include "game_object.h"
 #include "tile.h"
 #include "tile_graph.h"
-// #include "Point.h"
 #include "move_direction.h"
 
-// Just a temporary solution
-//const int SCREEN_WIDTH = 640;
-//const int SCREEN_HEIGHT = 480;
 
 class ServerPlayer : public GameObject
 {
 public:
-	//static TileGraph* tileGraph;
 
 	// Prefixed width and height of Player
 	static const int Width = 25;
 	static const int Height = 25;
 
 	// Number of frames in movment animation
-	static const int MoveFrames = 2;
+	static const int MoveFrames = 2; // must be more for us as we have humanoids
 
 	// Movement per frame
 	static const int Velocity = 3;
 
 	// ServerPlayer();
 
-	ServerPlayer(Tile* tile, Texture* texture);
+	ServerPlayer(Tile* tile, Texture* texture, int width, int height);
 	~ServerPlayer();
 
 	// Loads texture and sets up animation clips
@@ -79,6 +74,9 @@ public:
 	// Returns true if ServerPlayer is moving
 	bool IsMoving();
 
+	// centers the camera over the player
+	void setCamera(SDL_Rect& camera);
+
 private:
 	// Trys to move the ServerPlayer in desired direction
 	// Returns true if successful, false otherwise
@@ -90,12 +88,12 @@ private:
 	// Check if given collider is colliding with another collider
 	bool CheckForCollision(const SDL_Rect &collider, const SDL_Rect &otherCollider);
 
-	Texture* ServerPlayerTexture;
+	Texture* serverPlayerTexture;
 
-	SDL_Rect upAnimClips[2];
-	SDL_Rect downAnimClips[2];
-	SDL_Rect leftAnimClips[2];
-	SDL_Rect rightAnimClips[2];
+	SDL_Rect upAnimClips[MoveFrames];
+	SDL_Rect downAnimClips[MoveFrames];
+	SDL_Rect leftAnimClips[MoveFrames];
+	SDL_Rect rightAnimClips[MoveFrames];
 
 	int frame, frameCount;
 
@@ -108,4 +106,7 @@ private:
 	Tile* nextTile;
 
 	SDL_Rect collider;
+
+	int LEVEL_WIDTH;
+	int LEVEL_HEIGHT;
 };
