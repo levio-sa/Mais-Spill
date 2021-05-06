@@ -8,6 +8,9 @@
 
 #include "texture.h"
 #include "texture_manager.h"
+#include "server_player.h"
+#include "tile_graph.h"
+#include "map_generator.h"
 
 //Screen dimension constants
 const int SCREEN_WIDTH = 640;
@@ -35,6 +38,16 @@ SDL_Renderer* gRenderer = NULL;
 //Map of all Textures
 TextureManager gTextureManager;
 
+// List of all objects
+std::vector<GameObject*> gGameObjectList;
+
+// List of all tiles
+// TileGraph gTileGraph(20, 20);
+TileGraph gTileGraph(); // empty TileGraph object
+
+// Generates a map
+MapGenerator gMapGenerator(&gTileGraph, &gTextureManager);
+
 bool init()
 {
 	//Initialization flag
@@ -55,7 +68,7 @@ bool init()
 		}
 
 		//Create window
-		gWindow = SDL_CreateWindow( "SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN );
+		gWindow = SDL_CreateWindow( "Mais-Spill", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN );
 		if( gWindow == NULL )
 		{
 			printf( "Window could not be created! SDL Error: %s\n", SDL_GetError() );
@@ -101,7 +114,7 @@ bool init()
 	return success;
 }
 
-bool loadMedia()
+bool loadMenuMedia()
 {
 
 	//Load menu texture
@@ -110,6 +123,39 @@ bool loadMedia()
 		printf( "Failed to load lazy font! SDL_ttf Error: %s\n", TTF_GetError() );
 		return false;	
 	}
+	
+	//render text
+	SDL_Color textColor = {0,0,0};
+	Texture* menuTexture = new Texture();
+	if(!menuTexture->LoadFromRenderedText(menuFont,"menu",textColor)) {
+		printf( "Failed to render text texture!\n" );
+		return false;
+	}
+
+	gTextureManager.Add("menu", menuTexture); // provide texture manager to the menu class. Now only single loading of texture reqd compared to the UDP game
+
+	return true;
+}
+
+bool loadMedia(int tileGraphWidth, int tileGraphHeight, string mapFile)
+{
+
+	//Load menu texture
+	TTF_Font* menuFont = TTF_OpenFont( "Fonts/lazy.ttf", 28);
+	if(menuFont == NULL){
+		printf( "Failed to load lazy font! SDL_ttf Error: %s\n", TTF_GetError() );
+		return false;	
+	}
+	// Load wall texture
+	Texture* wallTexture = new Texture();
+	if (!wallTexture->LoadFromPNGImage("Sprites/bg.png"))
+		return false;
+	
+	// Load road texture
+	Texture* roadTexture = new Texture();
+	if (!roadTexture->LoadFromPNGImage("Sprites/bg.png"))
+		return false;
+
 	//render text
 	SDL_Color textColor = {0,0,0};
 	Texture* menuTexture = new Texture();
@@ -120,6 +166,19 @@ bool loadMedia()
 
 	// Add loaded textures to a TextureManager
 	gTextureManager.Add("menu", menuTexture);
+	gTextureManager.Add("wall", wallTexture);
+	gTextureManager.Add("road", roadTexture);
+
+	// TileGraph Setup
+	gTileGraph.Setup(tileGraphWidth,tileGraphWidth);
+
+	// Load Map
+	if (!gMapGenerator.Load(mapFile)){
+		printf("Failed to load map");
+		return false;
+	}
+
+	gMapGenerator.Populate(gGameObjectList);
 
 
 
@@ -190,65 +249,83 @@ int main( int argc, char* args[] )
 		/* //The level tiles
 		Tile* tileSet[ TOTAL_TILES ]; */
 
-		//Load media
-		if( !loadMedia( /* tileSet */ ) )
-		{
-			printf( "Failed to load media!\n" );
+		// Load menu media
+		if(!loadMenuMedia()){
+			printf("Failed to load menu media\n");
 		}
-		else
-		{	
-			//Main loop flag
-			bool quit = false;
+		else{
+			
+			bool quit = false; // this bool decides if game is quit from inside Menu Functions
 
-			//Event handler
-			SDL_Event e;
+			// default values of width and height of TileMap modified in Menu Funcs
+			int width = 20, height = 20;
 
-			/* //The dot that will be moving around on the screen
-			Dot dot; */
+			// file containing map. Generated in menu functions
+			std::string mapFile="MazeAlgos/maze3_7x7_n262.txt"; 
 
-			//Level camera
-			SDL_Rect camera = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
 
-			//While application is running
-			while( !quit )
-			{
-				//Handle events on queue
-				while( SDL_PollEvent( &e ) != 0 )
-				{
-					//User requests quit
-					if( e.type == SDL_QUIT )
-					{
-						quit = true;
-					}
 
-					/* //Handle input for the dot
-					dot.handleEvent( e ); */
+			while(!quit){
+
+				// Menu Functions -> handle events there only
+				
+				//Load game media
+				if( !loadMedia(width, height, mapFile) ){
+					printf( "Failed to load media!\n" );
 				}
+				else{	
+					// //Main loop flag
+					// bool quit = false;
 
-				/* //Move the dot
-				dot.move( tileSet );
-				dot.setCamera( camera ); */
+					//Event handler
+					SDL_Event e;
 
-				//Clear screen
-				SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
-				SDL_RenderClear( gRenderer );
-				Texture* menuTexture = gTextureManager.Get("menu");
-				menuTexture->Render( ( SCREEN_WIDTH - menuTexture->GetWidth() ) / 2, ( SCREEN_HEIGHT - menuTexture->GetHeight() ) / 2 );
+					/* //The dot that will be moving around on the screen
+					Dot dot; */
 
-/* 				//Render level
-				for( int i = 0; i < TOTAL_TILES; ++i )
-				{
-					tileSet[ i ]->render( camera );
-				} */
+					//Level camera
+					SDL_Rect camera = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
 
-/* 				//Render dot
-				dot.render( camera ); */
+					//While application is running
+					while( !quit ){
+						//Handle events on queue
+						while( SDL_PollEvent( &e ) != 0 ){
+							//User requests quit
+							if( e.type == SDL_QUIT )
+							{
+								quit = true;
+							}
 
-				//Update screen
-				SDL_RenderPresent( gRenderer );
+							/* //Handle input for the dot
+							dot.handleEvent( e ); */
+						}
+
+						/* //Move the dot
+						dot.move( tileSet );
+						dot.setCamera( camera ); */
+
+						//Clear screen
+						SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
+						SDL_RenderClear( gRenderer );
+						Texture* menuTexture = gTextureManager.Get("menu");
+						menuTexture->Render( ( SCREEN_WIDTH - menuTexture->GetWidth() ) / 2, ( SCREEN_HEIGHT - menuTexture->GetHeight() ) / 2 );
+						for (unsigned int i = 0; i < gGameObjectList.size(); i++)
+						gGameObjectList[i]->Render();
+		/* 				//Render level
+						for( int i = 0; i < TOTAL_TILES; ++i )
+						{
+							tileSet[ i ]->render( camera );
+						} */
+
+		/* 				//Render dot
+						dot.render( camera ); */
+
+						//Update screen
+						SDL_RenderPresent( gRenderer );
+					}
+				}
 			}
 		}
-		
 		//Free resources and close SDL
 		close(/*  tileSet  */);
 	}

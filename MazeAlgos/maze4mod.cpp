@@ -65,7 +65,7 @@ int main(int argc, char* argv[]){
     for(int i=0;i<rows+2;++i){
         for(int j=0;j<columns+2;++j){
             maze[i][j].in=(i==0 || j==0 || i==rows+1 || j==columns+1)?1:0;
-            maze[i][j].up=(i==rows+1 || j==0 || j==columns+1)?0:1;
+            maze[i][j].up=(i==0 || j==0 || j==columns+1)?0:1;
             maze[i][j].left=(i==0 || i==rows+1 || j==0)?0:1;
         }
     }
@@ -105,13 +105,13 @@ int main(int argc, char* argv[]){
                     }
                     break;
                 case(UP):
-                    if(!maze[xcur+1][ycur].in){
+                    if(!maze[xcur-1][ycur].in){
                         success=1;
                         maze[xcur][ycur].up=0;
-                        maze[xcur+1][ycur].in=1;
-                        maze[xcur+1][ycur].prevx=xcur;
-                        maze[xcur+1][ycur].prevy=ycur;
-                        xcur++;
+                        maze[xcur-1][ycur].in=1;
+                        maze[xcur-1][ycur].prevx=xcur;
+                        maze[xcur-1][ycur].prevy=ycur;
+                        xcur--;
                     }
                     break;
                 case(RIGHT):
@@ -125,13 +125,13 @@ int main(int argc, char* argv[]){
                     }
                     break;
                 case(DOWN):
-                    if(!maze[xcur-1][ycur].in){
+                    if(!maze[xcur+1][ycur].in){
                         success=1;
-                        maze[xcur-1][ycur].up=0;
-                        maze[xcur-1][ycur].in=1;
-                        maze[xcur-1][ycur].prevx=xcur;
-                        maze[xcur-1][ycur].prevy=ycur;
-                        xcur--;
+                        maze[xcur+1][ycur].up=0;
+                        maze[xcur+1][ycur].in=1;
+                        maze[xcur+1][ycur].prevx=xcur;
+                        maze[xcur+1][ycur].prevy=ycur;
+                        xcur++;
                     }
                     break;
             }
@@ -139,6 +139,50 @@ int main(int argc, char* argv[]){
         numIn++;
         visited.push_back(std::pair<int,int>(xcur,ycur));
         
+    }
+
+    // random loop add -> improve algo
+    int r = rand()%((rows+2)*(columns+2)/2);
+    for(int i=0;i<r;++i){
+        int x = 0, y = 0;
+        while(x==0 || x==rows+1 || y==0 || y==columns+1){
+            x= rand()%(rows+2);
+            y= rand()%(columns+2);
+        }
+
+        bool success = false;
+        
+        while(!success){
+
+            wall side = (wall)(rand()%4);
+
+            switch(side){
+                case LEFT:
+                if(y!=1){
+                    maze[x][y].left = 0;
+                    success=true;
+                }
+                break;
+                case UP:
+                    if(x!=1){
+                        maze[x][y].up = 0;
+                        success=true;
+                    }
+                    break;
+                case RIGHT:
+                    if(y!=columns){
+                        maze[x][y+1].left = 0;
+                        success = true;
+                    }
+                    break;
+                case DOWN:
+                    if(x!=rows){
+                        maze[x+1][y].up = 0;
+                        success = true;
+                    }
+                    break;
+            }
+        }
     }
 
     savebmp(xcur, ycur, rows+2, columns+2, numIn, maze);
@@ -158,7 +202,7 @@ void savebmp(int xspecial, int yspecial, int xsize, int ysize, int numin, std::v
 
 	char filename[200];
 	
-	sprintf(filename, "%s_%dx%d_n%d.bmp", "maze4", xsize, ysize, numin);
+	sprintf(filename, "%s_%dx%d_n%d.bmp", "maze4mod", xsize, ysize, numin);
 	paddedsize = ((width * 3) + extrabytes) * height;
 
 	unsigned int headers[13] = {paddedsize + 54, 0, 54, 40, width, height, 0, 0, paddedsize, 0, 0, 0, 0};
@@ -194,7 +238,7 @@ void savebmp(int xspecial, int yspecial, int xsize, int ysize, int numin, std::v
 			}else if(x%2 == 0 && y%2 == 0){
 				fprintf(outfile, "%c%c%c", 0,0,0);
 			}else if(x%2 == 0 && y%2 == 1){
-				if(maze[x/2][y/2+1].up) fprintf(outfile, "%c%c%c", 0,0,0); else fprintf(outfile, "%c%c%c", 255,255,255);
+				if(maze[x/2+1][y/2+1].up) fprintf(outfile, "%c%c%c", 0,0,0); else fprintf(outfile, "%c%c%c", 255,255,255);
 			}else if(x%2 == 1 && y%2 == 0){
 				if(maze[x/2+1][y/2+1].left) fprintf(outfile, "%c%c%c", 0,0,0); else fprintf(outfile, "%c%c%c", 255,255,255);
 			}

@@ -9,10 +9,13 @@ Texture* TextureManager::Get(std::string key) {
 }
 
 void TextureManager::Free() {
-	for (auto &pair : textureMap) {
-		delete pair.second;
-		textureMap.erase(pair.first);
-	}
+	std::unordered_map<std::string, Texture*> empty;
+	using std::swap;
+	swap(textureMap, empty);
+	// for (auto &pair : textureMap) {
+	// 	// delete pair.second;
+	// 	textureMap.erase(pair.first);
+	// }
 }
 
 TextureManager::~TextureManager() {

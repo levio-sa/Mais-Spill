@@ -6,6 +6,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "maze3gen.h"
+
 enum wall {
 
     LEFT,
@@ -39,8 +41,9 @@ struct cell{
 };
 
 void savebmp(int xspecial, int yspecial, int xsize, int ysize, std::vector<std::vector<cell>> maze, int numIn);
+void MapPrint(int xsize, int ysize, std::vector<std::vector<cell>> maze, int numIn);
 
-int main(int argc, char * argv[]){
+int pmain(int argc, char * argv[]){
 
     std::cout<<"HERE";
 
@@ -357,51 +360,8 @@ int main(int argc, char * argv[]){
     }
     std::cout << "Hello";
     // savebmp(0,0,rows+ROW_PADDING,columns+COL_PADDING,maze,numIn);
-    
-    // // random loop add -> improve algo
-    // int r = rand()%((rows+2)*(columns+2)/2);
-    // for(int i=0;i<r;++i){
-    //     int x = 0, y = 0;
-    //     while(x==0 || x==rows+1 || y==0 || y==columns+1){
-    //         x= rand()%(rows+2);
-    //         y= rand()%(columns+2);
-    //     }
-
-    //     bool success = false;
-        
-    //     while(!success){
-
-    //         wall side = (wall)(rand()%4);
-
-    //         switch(side){
-    //             case LEFT:
-    //             if(y!=1){
-    //                 maze[x][y].left = 0;
-    //                 success=true;
-    //             }
-    //             break;
-    //             case UP:
-    //                 if(x!=1){
-    //                     maze[x][y].up = 0;
-    //                     success=true;
-    //                 }
-    //                 break;
-    //             case RIGHT:
-    //                 if(y!=columns){
-    //                     maze[x][y+1].left = 0;
-    //                     success = true;
-    //                 }
-    //                 break;
-    //             case DOWN:
-    //                 if(x!=rows){
-    //                     maze[x+1][y].up = 0;
-    //                     success = true;
-    //                 }
-    //                 break;
-    //         }
-    //     }
-    // }
     savebmp(xcur,ycur,rows+ROW_PADDING,columns+COL_PADDING,maze, num);
+    MapPrint(rows+ROW_PADDING,columns+COL_PADDING,maze, num);
     return 0;
     
 }
@@ -464,6 +424,73 @@ void savebmp(int xspecial, int yspecial, int xsize, int ysize, std::vector<std::
 				fprintf(outfile, "%c", 0);
 			}
 		}
+	}
+	printf("file printed: %s\n", filename); 
+	fclose(outfile);
+	return;
+}
+
+void MapPrint(int xsize, int ysize, std::vector<std::vector<cell>> maze, int numIn){
+	//save a test file
+
+	FILE * outfile;
+	int extrabytes, paddedsize;
+	int x, y, n;
+	int width=(xsize-1)*2-1;
+	int height=(ysize-1)*2-1;
+
+	extrabytes = (4 - ((width * 3) % 4))%4; 
+
+	char filename[200];
+	
+	sprintf(filename, "%s_%dx%d_n%d.txt", "maze3", xsize, ysize, numIn);
+	paddedsize = ((width * 3) + extrabytes) * height;
+
+	unsigned int headers[13] = {paddedsize + 54, 0, 54, 40, width, height, 0, 0, paddedsize, 0, 0, 0, 0};
+
+	outfile = fopen(filename, "wb");
+	//fprintf(outfile, "w");
+
+	// for (n = 0; n <= 5; n++){
+	//    fprintf(outfile, "%c", headers[n] & 0x000000FF);
+	//    fprintf(outfile, "%c", (headers[n] & 0x0000FF00) >> 8);
+	//    fprintf(outfile, "%c", (headers[n] & 0x00FF0000) >> 16);
+	//    fprintf(outfile, "%c", (headers[n] & (unsigned int) 0xFF000000) >> 24);
+	// }
+
+	// fprintf(outfile, "%c", 1);fprintf(outfile, "%c", 0);
+	// fprintf(outfile, "%c", 24);fprintf(outfile, "%c", 0);
+
+	// for (n = 7; n <= 12; n++){
+	//    fprintf(outfile, "%c", headers[n] & 0x000000FF);
+	//    fprintf(outfile, "%c", (headers[n] & 0x0000FF00) >> 8);
+	//    fprintf(outfile, "%c", (headers[n] & 0x00FF0000) >> 16);
+	//    fprintf(outfile, "%c", (headers[n] & (unsigned int) 0xFF000000) >> 24);
+	// }
+
+	//Actual writing of data begins here:
+	for(y = 0; y <= height - 1; y++){
+		for(x = 0; x <= width - 1; x++){
+			if(x%2 == 1 && y%2 == 1){
+				// if(x/2+1 == xspecial && y/2+1 == yspecial) fprintf(outfile, "%c%c%c", 0,0,255);
+				// else{
+				// 	if(maze[x/2+1][y/2+1].in) fprintf(outfile, "%c%c%c", 255,255,255); else fprintf(outfile, "%c%c%c", 0,0,0);
+				// }
+				if(maze[x/2+1][y/2+1].in) fprintf(outfile, "%d ", 1); else fprintf(outfile, "%d ", 1);
+			}else if(x%2 == 0 && y%2 == 0){
+				fprintf(outfile, "%d ", 0);
+			}else if(x%2 == 0 && y%2 == 1){
+				if(maze[x/2+1][y/2+1].up) fprintf(outfile, "%d ", 0); else fprintf(outfile, "%d ", 1);
+			}else if(x%2 == 1 && y%2 == 0){
+				if(maze[x/2+1][y/2+1].left) fprintf(outfile, "%d ", 0); else fprintf(outfile, "%d ", 1);
+			}
+		}
+        fprintf(outfile, "\n");
+		// if (extrabytes){     // See above - BMP lines must be of lengths divisible by 4.
+		// 	for (n = 1; n <= extrabytes; n++){
+		// 		fprintf(outfile, "%d", 0);
+		// 	}
+		// }
 	}
 	printf("file printed: %s\n", filename); 
 	fclose(outfile);

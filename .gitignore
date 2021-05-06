@@ -1,3 +1,6 @@
 # vscode
 .history
 .vscode
+
+#tests
+*.bmp

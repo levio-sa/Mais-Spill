@@ -2,17 +2,31 @@
 
 #include <SDL2/SDL.h>>
 
+class ServerPlayer;
+class Wall;
+class Point;
+class Blinky;
+
+enum TileType {
+    TILE_GRASS,
+    TILE_FIRE,
+    TILE_BOMB,
+    TILE_WOOD,
+};
+
 class Tile {
     public:
 
         const static int WIDTH = 25;
         const static int HEIGHT = 25;
 
+        Tile();
+
         // initializes position and type
         Tile( int x, int y, TileType tileType );
 
-        // shows the tile
-        void Render( SDL_Rect& camera );
+        // // shows the tile
+        // void Render( SDL_Rect& camera );
 
         // get the tile type
         TileType GetType();
@@ -29,23 +43,26 @@ class Tile {
         // get the collision box
         SDL_Rect GetBox();
 
-        // Sets pointer to Pacman in the tile
-        void SetPacman(Pacman* pacman);
+        // Sets pointer to ServerPlayer in the tile
+        void SetServerPlayer(ServerPlayer* ServerPlayer);
 
         // Sets pointer to wall in the tile
         void SetWall(Wall* wall);
 
-        // Sets pointer to point in the tile
-        void SetPoint(Point* wall);
+        // // Sets pointer to point in the tile
+        // void SetPoint(Point* wall);
 
-        // Sets pointer to Blinky in the tile
-        void SetBlinky(Blinky* blinky);
+        // // Sets pointer to Blinky in the tile
+        // void SetBlinky(Blinky* blinky);
 
         // Sets position of the tile
         void SetPos(int x, int y);
 
-        // Returns pointer to Pacman in the tile
-        Pacman* GetPacman();
+        // Sets type of the tile
+        void SetType(int t); // should I go with type or wall and road?
+
+        // Returns pointer to ServerPlayer in the tile
+        ServerPlayer* GetServerPlayer();
         
         // Returns pointer to wall in the tile
         Wall* GetWall();
@@ -55,9 +72,6 @@ class Tile {
 
         // Returns pointer to wall in the tile
         Blinky* GetBlinky();
-
-        // Returns position of the tile
-        SDL_Point GetPosition();
     
     private:
 
@@ -68,4 +82,4 @@ class Tile {
         TileType type;
 
         SDL_Point position;
-}
+};

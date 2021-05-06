@@ -110,7 +110,7 @@ int main(int argc, char * argv[]){
     // }
 
     // generate
-    savebmp(0,0,rows+ROW_PADDING,columns+COL_PADDING,maze,0);
+    // savebmp(0,0,rows+ROW_PADDING,columns+COL_PADDING,maze,0);
 
     int numIn = 1; // number of cells in the maze currently
 
@@ -142,7 +142,7 @@ int main(int argc, char * argv[]){
         // }
         // std::cout<<"\n";
 
-        savebmp(xcur,ycur,rows+ROW_PADDING,columns+COL_PADDING,maze, numIn);
+        // savebmp(xcur,ycur,rows+ROW_PADDING,columns+COL_PADDING,maze, numIn);
 
         /* // enable this for no dead ends
         if(maze[xcur - 1][ycur].in && maze[xcur][ycur + 1].in && maze[xcur + 1][ycur].in && maze[xcur][ycur - 1].in){
