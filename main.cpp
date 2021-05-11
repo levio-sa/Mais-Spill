@@ -6,13 +6,15 @@
 #include <string>
 #include <fstream>
 
+#include "collision.h"
+#include "map_generator.h"
+#include "menu.h"
+#include "road.h"
+#include "server_player.h"
 #include "texture.h"
 #include "texture_manager.h"
-#include "server_player.h"
-#include "wall.h"
-#include "road.h"
 #include "tile_graph.h"
-#include "map_generator.h"
+#include "wall.h"
 
 //Screen dimension constants
 const int SCREEN_WIDTH = 640;
@@ -45,9 +47,10 @@ std::vector<GameObject*> gGameObjectList;
 
 // List of all tiles
 // TileGraph gTileGraph(20, 20);
-TileGraph gTileGraph(); // empty TileGraph object
+TileGraph gTileGraph; // empty TileGraph object
 
 // Generates a map
+// MapGenerator gMapGenerator(&gTileGraph, &gTextureManager);
 MapGenerator gMapGenerator(&gTileGraph, &gTextureManager);
 
 bool init()
@@ -139,7 +142,7 @@ bool loadMenuMedia()
 	return true;
 }
 
-bool loadMedia(int tileGraphWidth, int tileGraphHeight, string mapFile)
+bool loadMedia(int tileGraphWidth, int tileGraphHeight, std::string mapFile)
 {
 
 	//Load menu texture
@@ -173,6 +176,11 @@ bool loadMedia(int tileGraphWidth, int tileGraphHeight, string mapFile)
 
 	// TileGraph Setup
 	gTileGraph.Setup(tileGraphWidth,tileGraphWidth);
+	printf("%d\n",gTileGraph.width);
+	printf("%d\n",gMapGenerator.pTileGraph->width);
+
+	// Set static variables for objects
+	GameObject::tileGraph = &gTileGraph;
 
 	Wall::CreateClips();
 	Road::CreateClips();
@@ -271,17 +279,20 @@ int main( int argc, char* args[] )
 			int width = 20, height = 20;
 
 			// file containing map. Generated in menu functions
-			std::string mapFile="MazeAlgos/maze3_7x7_n262.txt"; 
+			std::string mapFile="maze.txt"; 
+			// MenuFunction(width, height);
 
 
 
 			while(!quit){
 
 				// Menu Functions -> handle events there only
+				// MenuFunction(width, height);
 				
 				//Load game media
-				if( !loadMedia(width, height, mapFile) ){
+				if( !loadMedia((width+1)*2-1, (height+1)*2-1, mapFile) ){
 					printf( "Failed to load media!\n" );
+					break;
 				}
 				else{	
 					// //Main loop flag

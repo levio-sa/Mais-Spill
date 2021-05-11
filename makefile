@@ -1,5 +1,5 @@
 #OBJS specifies which files to compile as part of the project
-OBJS = game_object.cpp main.cpp map_generator.cpp road.cpp texture_manager.cpp texture.cpp tile_graph.cpp tile.cpp wall.cpp
+OBJS = game_object.cpp main.cpp map_generator.cpp road.cpp texture_manager.cpp texture.cpp tile_graph.cpp tile.cpp wall.cpp collision.cpp menu.cpp MazeAlgos/maze3gen.cpp
 
 #CC specifies which compiler we're using
 CC = g++

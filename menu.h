@@ -14,3 +14,7 @@
 // void ModeSelect() // What type of game -> do in last
 
 // #endif
+
+#pragma once
+
+void MenuFunction(int x, int y);

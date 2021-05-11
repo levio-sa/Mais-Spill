@@ -23,7 +23,7 @@ public:
 	// Populate a GameObject* vector with all the generated objects
 	void Populate(std::vector<GameObject*>& vector);
 
-private:
+// private:
 	std::vector<GameObject*> objectVector;
 
 	TileGraph* pTileGraph;

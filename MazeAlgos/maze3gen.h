@@ -1,3 +1,3 @@
 #pragma once
 
-int pmain(int argc, char* argv[]);
+int MazeMain(int rowsprov, int columnsprov);

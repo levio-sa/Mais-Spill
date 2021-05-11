@@ -1,6 +1,6 @@
 #include "collision.h"
 
-bool CheckForCollision(const SDL_Rect &collider, const SDL_Rect &otherCollider)
+bool CheckForCollision(SDL_Rect &collider, SDL_Rect &otherCollider)
 {
 	if (otherCollider.x > collider.x + collider.w) {
 		//printf("1");

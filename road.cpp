@@ -56,7 +56,7 @@ Road::Road(Tile* tile, Texture* texture)
 	std::array<Tile*, 4> neighbours = tileGraph->GetNeighbours(this->currTile);
 	for (int i = 0; i < 4; i++) {
 		if (CheckForRoad(neighbours[i]))
-			// neighbours[i]->GetRoad()->UpdateConnections();
+			neighbours[i]->GetRoad()->UpdateConnections();
 	}
 }
 
@@ -82,6 +82,9 @@ void Road::SetTile(Tile* newTile)
 
 void Road::UpdateConnections()
 {
+	printf("%d\n",tileGraph->width);
+	printf("%d\n",this->Width);
+	printf("%d\n",this->currTile->GetX());
 	std::array<Tile*, 4> neighbours = tileGraph->GetNeighbours(this->currTile);
 
 	connections = 0;

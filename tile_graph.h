@@ -34,11 +34,11 @@ class TileGraph {
 
 		// Pacman* GetPacman();
 
-	private:
+	// private:
 		Tile* tiles;
 		int width;
 		int height;
 
-		int GetIndex(int x, int h);
+		int GetIndex(int x, int y);
 };
 

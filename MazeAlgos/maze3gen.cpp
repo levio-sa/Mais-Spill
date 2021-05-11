@@ -43,26 +43,29 @@ struct cell{
 void savebmp(int xspecial, int yspecial, int xsize, int ysize, std::vector<std::vector<cell>> maze, int numIn);
 void MapPrint(int xsize, int ysize, std::vector<std::vector<cell>> maze, int numIn);
 
-int pmain(int argc, char * argv[]){
+int MazeMain(int rowsprov, int columnsprov){
 
     std::cout<<"HERE";
 
-    if(argc!=3){
+    // if(argc!=3){
 
-        std::cout<<"Input format should be ./maze2 rows columns";
-        return 0;
+    //     std::cout<<"Input format should be ./maze2 rows columns";
+    //     return 0;
 
-    }
+    // }
 
-    if(!isInteger(argv[1]) || !isInteger(argv[2])){
+    // if(!isInteger(argv[1]) || !isInteger(argv[2])){
 
-        std::cout<<"Invalid row/column size";
-        return 0;
+    //     std::cout<<"Invalid row/column size";
+    //     return 0;
 
-    }
+    // }
 
-    int rows = std::stoi(argv[1]);
-    int columns = std::stoi(argv[2]);
+    // int rows = std::stoi(argv[1]);
+    // int columns = std::stoi(argv[2]);
+
+    int rows = rowsprov;
+    int columns = columnsprov;
 
     const int ROW_PADDING = 2;
     const int COL_PADDING = 2;
@@ -112,7 +115,7 @@ int pmain(int argc, char * argv[]){
     // }
 
     // generate
-    savebmp(0,0,rows+ROW_PADDING,columns+COL_PADDING,maze,0);
+    //savebmp(0,0,rows+ROW_PADDING,columns+COL_PADDING,maze,0);
 
     int numIn = 1; // number of cells in the maze currently
     int num = 1;
@@ -147,7 +150,7 @@ int pmain(int argc, char * argv[]){
         while(maze[xcur][ycur].in){
             xcur = rand()%(rows+ROW_PADDING);
             ycur = rand()%(columns+COL_PADDING);
-            std::cout<<148;
+            // std::cout<<148;
             //savebmp(xcur,ycur,rows+ROW_PADDING,columns+COL_PADDING,maze, num);
             num++;
         }
@@ -159,15 +162,15 @@ int pmain(int argc, char * argv[]){
         while(!success){
         
             side = (wall)(rand()%4);
-            std::cout<<"\n";
-            std::cout<<side<<"\n";
-            std::cout<<xcur<<"\n";
-            std::cout<<ycur<<"\n";
-            std::cout<<maze[xcur][ycur].in<<"\n";
-            std::cout<<maze[xcur-1][ycur].in<<"\n";
-            std::cout<<maze[xcur][ycur-1].in<<"\n";
-            std::cout<<maze[xcur+1][ycur].in<<"\n";
-            std::cout<<maze[xcur][ycur+1].in<<"\n";
+            // std::cout<<"\n";
+            // std::cout<<side<<"\n";
+            // std::cout<<xcur<<"\n";
+            // std::cout<<ycur<<"\n";
+            // std::cout<<maze[xcur][ycur].in<<"\n";
+            // std::cout<<maze[xcur-1][ycur].in<<"\n";
+            // std::cout<<maze[xcur][ycur-1].in<<"\n";
+            // std::cout<<maze[xcur+1][ycur].in<<"\n";
+            // std::cout<<maze[xcur][ycur+1].in<<"\n";
             switch(side){
                 case(LEFT):
                     if(/*!(maze[xcur][ycur-1].in==2) &&  */ycur!=1){
@@ -337,13 +340,13 @@ int pmain(int argc, char * argv[]){
                 default:
                     break;
             }
-            std::cout<<"289";
+            // std::cout<<"289";
             //savebmp(xcur,ycur,rows+ROW_PADDING,columns+COL_PADDING,maze, num);
             num++;
         }
         maze[xcur][ycur].in=1;
         numIn++;
-        std::cout<<296;
+        // std::cout<<296;
         //savebmp(xcur,ycur,rows+ROW_PADDING,columns+COL_PADDING,maze, num);
         num++;
         while(maze[xcur][ycur].prevx!=-1){
@@ -352,7 +355,7 @@ int pmain(int argc, char * argv[]){
             xcur = t;
             maze[xcur][ycur].in=1;
             numIn++;
-            std::cout<<305;
+            // std::cout<<305;
             //savebmp(xcur,ycur,rows+ROW_PADDING,columns+COL_PADDING,maze, num);
             num++;
         }
@@ -378,7 +381,7 @@ void savebmp(int xspecial, int yspecial, int xsize, int ysize, std::vector<std::
 
 	char filename[200];
 	
-	sprintf(filename, "%s_%dx%d_n%d.bmp", "maze3", xsize, ysize, numIn);
+	sprintf(filename, "MazeAlgos/maze.bmp", "maze3", xsize, ysize, numIn);
 	paddedsize = ((width * 3) + extrabytes) * height;
 
 	unsigned int headers[13] = {paddedsize + 54, 0, 54, 40, width, height, 0, 0, paddedsize, 0, 0, 0, 0};
@@ -443,7 +446,7 @@ void MapPrint(int xsize, int ysize, std::vector<std::vector<cell>> maze, int num
 
 	char filename[200];
 	
-	sprintf(filename, "%s_%dx%d_n%d.txt", "maze3", xsize, ysize, numIn);
+	sprintf(filename, "MazeAlgos/maze.txt", "maze3", xsize, ysize, numIn);
 	paddedsize = ((width * 3) + extrabytes) * height;
 
 	unsigned int headers[13] = {paddedsize + 54, 0, 54, 40, width, height, 0, 0, paddedsize, 0, 0, 0, 0};

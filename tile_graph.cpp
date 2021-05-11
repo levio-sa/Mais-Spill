@@ -46,6 +46,8 @@ void TileGraph::Setup(int w, int h)
 
 	width = w;
 	height = h;
+	printf("hi\n");
+	printf("%d\n",width);
 }
 
 TileGraph::~TileGraph()
@@ -54,7 +56,7 @@ TileGraph::~TileGraph()
 }
 
 Tile* TileGraph::GetTileAt(int x, int y){
-	int index = GetIndex(x, y);
+	int index = GetIndex(x, y);//printf("%d\n",index);
 	if (index < 0)
 		return NULL;
 
@@ -66,7 +68,7 @@ std::array<Tile*, 4> TileGraph::GetNeighbours(Tile* tile)
 	std::array<Tile*, 4> neighbours;
 
 	int x = tile->GetPosition().x;
-	int y = tile->GetPosition().y;
+	int y = tile->GetPosition().y;//printf("%d\n",width);printf("%d%d\n",x,y);
 
 	neighbours[0] = GetTileAt(x, y + 1);		// N
 	neighbours[1] = GetTileAt(x + 1, y);		// E

@@ -1,3 +1,4 @@
+#pragma once
 #include <SDL2/SDL.h>
 
-bool CheckForCollision(const SDL_Rect &collider, const SDL_Rect &otherCollider);
+bool CheckForCollision(SDL_Rect &collider, SDL_Rect &otherCollider);

@@ -52,6 +52,11 @@ Wall* Tile::GetWall()
 	return wall;
 }
 
+Road* Tile::GetRoad()
+{
+	return road;
+}
+
 void Tile::SetPos(int xcor, int ycor){
     position.x = xcor;
     position.y = ycor;
