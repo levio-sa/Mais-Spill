@@ -175,7 +175,7 @@ bool loadMedia(int tileGraphWidth, int tileGraphHeight, std::string mapFile)
 	gTextureManager.Add("road", roadTexture);
 
 	// TileGraph Setup
-	gTileGraph.Setup(tileGraphWidth,tileGraphWidth);
+	gTileGraph.Setup(tileGraphWidth,tileGraphHeight);
 	printf("%d\n",gTileGraph.width);
 	printf("%d\n",gMapGenerator.pTileGraph->width);
 
